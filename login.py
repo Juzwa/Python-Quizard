@@ -1,17 +1,22 @@
 import tkinter as tk
 from tkinter import messagebox
-import sqlite3
+import mysql.connector
 
 def login():
     username = entry_username.get()
     password = entry_password.get()
 
-    # Connect to the SQLite database
-    conn = sqlite3.connect('users.db')
+    # Connect to the MySQL database
+    conn = mysql.connector.connect(
+        host='localhost',
+        user='your_mysql_user',
+        password='your_mysql_password',
+        database='user'
+    )
     cursor = conn.cursor()
 
     # Check if the credentials match
-    cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+    cursor.execute("SELECT * FROM users WHERE username=%s AND password=%s", (username, password))
     result = cursor.fetchone()
 
     if result:
@@ -19,6 +24,7 @@ def login():
     else:
         messagebox.showerror("Login Status", "Invalid credentials, please try again.")
 
+    cursor.close()
     conn.close()
 
 # Create the main window
